@@ -20,6 +20,7 @@ function doGet() {
  var value = JSON.parse(JSON.stringify(values));
  
   var title="[ミリシタ]" +value[1][3] +" ～" + value[1][0] +"～　終了"; 
+  var title2="[ミリシタ]" +value[1][3] +" ～" + value[1][0] +"～　開始"; 
   var stat= value[1][4];
   var end= value[1][5];
   var moment = Moment.load();
@@ -32,24 +33,34 @@ function doGet() {
   end = (moment(end).valueOf()/10000).toFixed(0);
   }
   
+  if(moment(stat)!=null){
+  stat = (moment(stat).valueOf()/10000).toFixed(0);
+  }
+  
   var header= "<style>th,td{  border:solid 1px #aaaaaa;},.table-scroll{  overflow-x : auto}</style>";
   
-   var i, len, arr;
+   var i, len, arr,arr2;
   
         for(i=0,len=title.length,arr=[]; i<len; i++) {
             arr +="%25u"+  ("00"+title.charCodeAt(i).toString(16)).slice(-4);
         }
+        for(i=0,len=title2.length,arr2=[]; i<len; i++) {
+            arr2 +="%25u"+  ("00"+title2.charCodeAt(i).toString(16)).slice(-4);
+        }
   
-  url = header +"<tr><td>のこりじかんたいまー</td><td>"+ hyperlink( url +end +"," +arr) +"</td></tr>";
+  var html="";
+  
+  html = header +"<tr><td>のこりじかんたいまー</td><td>"+ hyperlink( url +end +"," +arr) +"</td></tr>";
+  html += "<tr><td>けいかじかんたいまー</td><td>"+ hyperlink( url +stat +"," +arr2) +"</td></tr>";
   
   
-  url+= "<tr><td>いべたいまー(経過＋世界)</td>"+"<td>"+ hyperlink("http://sokudon.s17.xrea.com/ibetimer.html")+"</td></tr>";
-  url+= "<tr><td>いべしゅうりょうせかい</td>"+"<td>"+ hyperlink("http://sokudon.s17.xrea.com/sekai.html") +"</td></tr>";
+ html+= "<tr><td>いべたいまー(経過＋世界)</td>"+"<td>"+ hyperlink("http://sokudon.s17.xrea.com/ibetimer.html")+"</td></tr>";
+ html+= "<tr><td>いべしゅうりょうせかい</td>"+"<td>"+ hyperlink("http://sokudon.s17.xrea.com/sekai.html") +"</td></tr>";
   
   
-  url = "<table><tbody>" +url + "<tbody></table>";
+ html= "<table><tbody>" +html + "<tbody></table>";
   
-  return HtmlService.createHtmlOutput(url);
+  return HtmlService.createHtmlOutput(html);
   //return ContentService.createTextOutput(url).setMimeType(ContentService.MimeType.JAVASCRIPT);
 }
 
