@@ -42,11 +42,20 @@ function doGet() {
    var i, len, arr,arr2;
   
         for(i=0,len=title.length,arr=[]; i<len; i++) {
+          if(title.charCodeAt(i) < 0x80){
+            arr += title.substr(i, 1);
+          }
+          else{
             arr +="%25u"+  ("00"+title.charCodeAt(i).toString(16)).slice(-4);
+          }
         }
         for(i=0,len=title2.length,arr2=[]; i<len; i++) {
+          if(title2.charCodeAt(i) < 0x80){
+            arr2 += title2.substr(i, 1);
+          }
+          else{
             arr2 +="%25u"+  ("00"+title2.charCodeAt(i).toString(16)).slice(-4);
-        }
+          }}
   
   var html="";
   
