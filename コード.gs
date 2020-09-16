@@ -14,7 +14,8 @@ function doGet() {
   var sheets = ss.getSheetByName(sname);
   
 　var last_row = sheets.getRange(1,10).getValue();
-　var last_col = 6;
+　var last_col = 7;
+  
   
   var values= sheets.getRange(1,1,last_row ,last_col).getValues();
  var value = JSON.parse(JSON.stringify(values));
@@ -24,18 +25,28 @@ function doGet() {
   var html="";
   var url="http://www.shurey.com/js/timer/countdown.html?C,"; //154626840,
   var neta="http://sokudon.s17.xrea.com/neta/imm.html#";
-  
+    var url2='https://www.timeanddate.com/countdown/gaming?iso=YYYYMMDDThhmm&p0=248&msg=event&font=slab&csz=1'
+
   for(var k=1;k<value.length;k++){
     
     
   var titleraw="[ミリシタ]" +value[k][3] +" ～" + value[k][0]; 
-  var title="[ミリシタ]" +value[k][3] +" ～" + value[k][0] +"～　終了"; 
-  var title2="[ミリシタ]" +value[k][3] +" ～" + value[k][0] +"～　開始"; 
+  var title="[ミリシタ]" +value[k][3] +" ～" + value[k][0] +"～　開始";
+  var title2="[ミリシタ]" +value[k][3] +" ～" + value[k][0]  +"～　終了"; 
   var stat= value[k][4];
   var end= value[k][5];
+  var dura= value[k][6];
   
+  //{}|\^[]`<>#"%
   var reg = new RegExp('[<>#"%]',"gm");
   title = title.replace(reg,"");
+  titleraw = titleraw.replace(reg,"");
+  title = title.replace(/\?/,"？");
+  titleraw = titleraw.replace(/\?/,"？");
+  var endst ="null";
+  if(end!=""){
+  endst=  moment(end).format();
+  }
   
   if(stat!=""){
   stat = (moment(stat).valueOf()/10000).toFixed(0);
@@ -50,7 +61,7 @@ function doGet() {
             arr +="%25u"+  ("00"+title.charCodeAt(i).toString(16)).slice(-4);
           }
         }
-     html += "<tr><td>"+ hyperlink(neta + encodeURI(titleraw)+","+moment(stat*10000).format()+","+moment(end*10000).format(),titleraw) +"</td>"
+     html += "<tr><td>"+ hyperlink(neta + encodeURIComponent(titleraw)+","+moment(stat*10000).format()+","+endst,titleraw) +"</td>"
     html+= "<td>"+ hyperlink( url +stat +"," +arr,moment(stat*10000).format()) +"</td>";
   }
   if(end!=""){
@@ -64,8 +75,16 @@ function doGet() {
             arr +="%25u"+  ("00"+title2.charCodeAt(i).toString(16)).slice(-4);
           }
         }
-  html += "<td>"+ hyperlink( url +end +"," +arr,moment(end*10000).format()) +"</td>";
+  html += "<td>"+ hyperlink( url +end +"," +arr,moment(end*10000).format());
+ if(k==1){
+ html +=" " + hyperlink(url2.replace(/YYYYMMDDThhmm/,moment(end*10000).format("YYYYMMDDTHHmm")).replace("event",title2),"time&date");
+ }
+ html +="</td>";
   }
+  else{
+  html += "<td></td>";
+  }
+  html += "<td>"+dura*24+"時間," + dura+"日</td>";
     html += "</tr>";
   }
   
@@ -75,7 +94,7 @@ function doGet() {
   
   
   var header= "<style>th,td{  border:solid 1px #aaaaaa;},.table-scroll{  overflow-x : auto}</style>";
-  var h ="<table><thead><tr><th>いべんと名(はんようたいまたいむぞーん対応)</th><th>開始日からのみ</th><th>終了日からのみ</th></tr></thead>";  
+  var h ="<table><thead><tr><th>いべんと名(はんようたいまたいむぞーん対応)</th><th>開始日からのみ</th><th>終了日からのみ</th><th>期間(h,d)</th></tr></thead>";  
   
   html= h+"<tbody>"+ header  +html + "<tbody></table>";
   
@@ -90,11 +109,11 @@ function doGet() {
 // {}|\^[]`<>#"%
 
 function hyperlink(link,a){
-  link= "<a href='" + link +"'>" +a +"</a>";
+  link= "<a href='" + link.toString().replace(/'/gm,"%27") +"' target=\"_blank\" rel=\"noopener\">" +a +"</a>";
   
   return link;
-}
 
+}
 function wmap_getSheetsName(sheets){
   //var sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
   var sheet_names = new Array();
